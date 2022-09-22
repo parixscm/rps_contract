@@ -32,8 +32,13 @@ contract RPS {
 
     mapping(uint => Game) rooms;
     uint roomLen = 0;
+
+    modifier isValidHand(Hand _hand) {
+        require((_hand == Hand.rock) || (_hand == Hand.scissors) || (_hand == Hand.paper));
+        _;
+    }
     
-    function createRoom(Hand _hand) public payable returns(uint roomNum) {
+    function createRoom(Hand _hand) public payable isValidHand(_hand) returns(uint roomNum) {
         rooms[roomLen] = Game(
             Player(
                 payable(msg.sender),
