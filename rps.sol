@@ -93,4 +93,22 @@ contract RPS {
     function checkTotalPay(uint roomNum) public view returns(uint) {
         return rooms[roomNum].totalBetAmount;
     }
+
+    function payout(uint roomNum) public payable {
+        if (rooms[roomNum].host.status == PlayerStatus.TIE && rooms[roomNum].guest.status == PlayerStatus.TIE) {
+            rooms[roomNum].host.addr.transfer(rooms[roomNum].host.betAmount);
+            rooms[roomNum].guest.addr.transfer(rooms[roomNum].guest.betAmount);
+        } else {
+            if (rooms[roomNum].host.status == PlayerStatus.WIN) {
+                rooms[roomNum].host.addr.transfer(rooms[roomNum].totalBetAmount);
+            } else if (rooms[roomNum].guest.status == PlayerStatus.WIN) {
+                rooms[roomNum].guest.addr.transfer(rooms[roomNum].totalBetAmount);
+            } else {
+                rooms[roomNum].host.addr.transfer(rooms[roomNum].host.betAmount);
+                rooms[roomNum].guest.addr.transfer(rooms[roomNum].guest.betAmount);
+            }
+        }
+
+        rooms[roomNum].status = GameStatus.COMPLETE;
+    }
 }
