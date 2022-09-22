@@ -58,4 +58,35 @@ contract RPS {
         roomNum = roomLen;
         roomLen += 1;
     }
+
+    function joinRoom(uint roomNum, Hand _hand) public payable isValidHand(_hand) {
+        rooms[roomNum].guest = Player(
+            payable(msg.sender),
+            msg.value,
+            _hand,
+            PlayerStatus.PENDING
+        );
+        rooms[roomNum].totalBetAmount += msg.value;
+        compareHands(roomNum);
+    }
+
+    function compareHands(uint roomNum) private {
+        uint8 host = uint8(rooms[roomNum].host.hand);
+        uint8 guest = uint8(rooms[roomNum].guest.hand);
+        
+        rooms[roomNum].status = GameStatus.STARTED;
+
+        if (host == guest) {
+            rooms[roomNum].host.status = PlayerStatus.TIE;
+            rooms[roomNum].guest.status = PlayerStatus.TIE;
+        } else if ((guest + 1) % 3 == host) {
+            rooms[roomNum].host.status = PlayerStatus.WIN;
+            rooms[roomNum].guest.status = PlayerStatus.LOSE;
+        } else if ((host + 1) % 3 == guest) {
+            rooms[roomNum].host.status = PlayerStatus.LOSE;
+            rooms[roomNum].guest.status = PlayerStatus.WIN;
+        } else {
+            rooms[roomNum].status = GameStatus.ERROR;
+        }
+    }
 }
