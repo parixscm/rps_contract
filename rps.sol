@@ -94,7 +94,12 @@ contract RPS {
         return rooms[roomNum].totalBetAmount;
     }
 
-    function payout(uint roomNum) public payable {
+    modifier isPlayer(uint roomNum, address sender) {
+        require(sender == rooms[roomNum].host.addr || sender == rooms[roomNum].guest.addr);
+        _;
+    }
+
+    function payout(uint roomNum) public payable isPlayer(roomNum, msg.sender) {
         if (rooms[roomNum].host.status == PlayerStatus.TIE && rooms[roomNum].guest.status == PlayerStatus.TIE) {
             rooms[roomNum].host.addr.transfer(rooms[roomNum].host.betAmount);
             rooms[roomNum].guest.addr.transfer(rooms[roomNum].guest.betAmount);
