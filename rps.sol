@@ -18,4 +18,18 @@ contract RPS {
         Hand hand;
         PlayerStatus status;
     }
+
+    enum GameStatus {
+        NOT_STARTED, STARTED, COMPLETE, ERROR
+    }
+
+    struct Game {
+        Player host;
+        Player guest;
+        uint256 totalBetAmount;
+        GameStatus status;
+    }
+
+    mapping(uint => Game) rooms;
+    uint roomLen = 0;
 }
