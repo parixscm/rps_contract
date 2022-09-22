@@ -89,4 +89,8 @@ contract RPS {
             rooms[roomNum].status = GameStatus.ERROR;
         }
     }
+
+    function checkTotalPay(uint roomNum) public view returns(uint) {
+        return rooms[roomNum].totalBetAmount;
+    }
 }
